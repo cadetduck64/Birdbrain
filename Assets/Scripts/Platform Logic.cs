@@ -10,8 +10,10 @@ public class PlatformLogic : MonoBehaviour
 
     // void OnCollisionEnter(Collision collision)
     // {
-    //     collision.gameObject.GetComponent<Rigidbody>().AddForce(new Vector3(10, 10, 0), ForceMode.Impulse);
-    //     Debug.Log("BUMPED");
+    //     // collision.gameObject.GetComponent<Rigidbody>().AddForce(new Vector3(10, 10, 0), ForceMode.Impulse);
+    //     // Debug.Log("BUMPED");
+    //     if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Enemy"))
+    //     collision.transform.position = new Vector3(collision.transform.position.x, collision.transform.position.y + 1, 0);
     // }
 
     // void OnTriggerEnter(Collider other)
@@ -20,10 +22,11 @@ public class PlatformLogic : MonoBehaviour
     //     Debug.Log("BUMPED");
     // }
 
-    // void OnTriggerStay(Collider other)
-    // {
-    //     other.gameObject.GetComponent<Rigidbody>().AddForce(new Vector3(1, 1, 1), ForceMode.VelocityChange);
-    // }
+    void OnTriggerStay(Collider other)
+    {
+        // other.gameObject.GetComponent<Rigidbody>().AddForce(new Vector3(1, 1, 1), ForceMode.VelocityChange);
+
+    }
 
     // Update is called once per frame
     void Update()

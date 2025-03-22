@@ -10,7 +10,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     //variables
-    private bool isPaused = false;
+    public bool isPaused = false;
 
     private int score;
 
@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
         if (isPaused == true) {Time.timeScale = 1; isPaused = false;}
         else if (isPaused == false) {Time.timeScale = 0; isPaused = true;}
         pauseMenu.SetActive(isPaused);
-        Debug.Log(isPaused);
+        
     }
 
     public void LoadLevel(int level) {
@@ -98,28 +98,47 @@ public class GameManager : MonoBehaviour
     public void SpawnEnemy() {
         // EnemySpawnerLogic enemySpawner = GameObject.Find("Enemy Spawner").GetComponent<EnemySpawnerLogic>();
         GameObject[] enemySpawner = GameObject.FindGameObjectsWithTag("EnemySpawner");
-        Debug.Log(enemySpawner);
+        // Debug.Log(enemySpawner);
         for (int i = 0; i < enemySpawner.Length; i++)
         {
             enemySpawner[i].GetComponent<EnemySpawnerLogic>().EnemySpawnerFunc();
         }
-        
-        // Instantiate(EnemyList[UnityEngine.Random.Range(0, EnemyList.Count)], new Vector3(0,0,0), Quaternion.identity);
     }
+
+    //invincibility handling methods
+
+    //activates invincibility effect
+    //  by taking parameters for the entity to become invincible, seconds for invincibility and layers to be invincible from
+    //then calls DisableInvincibility method
+    public void EnableInvincibility(GameObject entity, int invicibletime, LayerMask excludedLayers) {
+        entity.GetComponent<CapsuleCollider>().excludeLayers = excludedLayers;
+        // Debug.Log(excludedLayers.ToString());
+        StartCoroutine(DisableInvincibility(invicibletime, entity));
+    }
+    public IEnumerator DisableInvincibility(int delayTime, GameObject entity) {
+        yield return new WaitForSeconds(delayTime);
+        entity.gameObject.GetComponent<CapsuleCollider>().enabled = true;
+        entity.GetComponent<CapsuleCollider>().excludeLayers = LayerMask.GetMask("Nothing");
+    }
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Time.timeScale = 1;
         playerRb = GameObject.Find("Player");
         pauseMenu = GameObject.Find("Pause Menu");
         isPaused = false;
         pauseMenu.SetActive(false);
+Debug.Log(isPaused);
         // PauseGame();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {PauseGame();}
         // Debug.Log(playerRb.transform.position);
         
     }

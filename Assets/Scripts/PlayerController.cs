@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
 
     private int lastRotation;
 
-    private bool isHovering;
+    public bool isHovering;
 
     //debug varible for checking ground contact
     // public float raycast;
@@ -46,8 +46,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {gameManagerVariable.PauseGame();}
+        if (gameManagerVariable.isPaused)
+        {return;}
+
+        // if (Input.GetKeyDown(KeyCode.Escape))
+        // {gameManagerVariable.PauseGame();}
         
         //moves the player to a set Z axis if deviated from
         if (playerRb.transform.position.z != 0)
@@ -72,16 +75,11 @@ public class PlayerController : MonoBehaviour
             return IsOnGround() && IsSliding();
         }
 
+        
+        //check if player is touching the ground by checking true for on IsOnGround and IsSliding functions
         //check if player is touching the ground by checking true for on IsOnGround and IsSliding functions
 
-
-        // Debug.Log(forwardInput);
-        // Debug.Log(playerRb.linearVelocity.normalized.x);
-        // Debug.Log(IsSliding());
-        // Debug.Log(IsOnGround());
-        // Debug.Log(IsSlidingOnGround());
-
-        //changes last recorded rotaion direction in the forward input variable and tracks key presses to turn the model
+        //changes last recorded rotation direction in the forward input variable and tracks key presses to turn the model
         if (forwardInput < 0)
         {lastRotation = -90;}
         else if (forwardInput > 0)
@@ -94,12 +92,12 @@ public class PlayerController : MonoBehaviour
         //allows player to dash by applying vector force based on last rotation
         if (Input.GetKeyDown(KeyCode.R))
         {if(lastRotation < 0)
-            {playerRb.AddForce(new Vector3(-10, 0, 0), ForceMode.VelocityChange);}
-            else if (lastRotation > 0) {playerRb.AddForce(new Vector3(10, 0, 0), ForceMode.VelocityChange);}
+        {playerRb.AddForce(new Vector3(-10, 0, 0), ForceMode.VelocityChange);}
+        else if (lastRotation > 0) {playerRb.AddForce(new Vector3(10, 0, 0), ForceMode.VelocityChange);}
         }
 
         //locks player Y axis if isHovering bool is true
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !IsOnGround())
         {if (isHovering) {isHovering = false;}
         else if (!isHovering) {isHovering = true;}}
 

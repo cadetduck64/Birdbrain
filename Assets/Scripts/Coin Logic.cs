@@ -11,7 +11,7 @@ public class CoinLogic : MonoBehaviour
     }
 
     void OnTriggerEnter(Collider other) {
-        Debug.Log(other.tag);
+        // Debug.Log(other.tag);
             if (other.CompareTag("Floor") || other.CompareTag("Bumper"))
             {Destroy(gameObject); gameManagerVariable.SpawnCoin();  return;}
             else if(other.CompareTag("Player"))
