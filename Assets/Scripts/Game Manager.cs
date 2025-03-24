@@ -26,7 +26,12 @@ public class GameManager : MonoBehaviour
 
     //UI variables
     public TextMeshProUGUI scoreText;
+    
     // TextMeshProUGUI health;
+
+    public bool hidingPlatforms;
+
+    public bool showingPlatforms;
     
     //methods/functions
 
@@ -41,18 +46,51 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(level);
     }
 
-    private void RearrangePlatforms() {
+    public void HidePlatforms() {
+        hidingPlatforms = true;
+        Debug.Log(hidingPlatforms);
+        GameObject[] floorsArray = GameObject.FindGameObjectsWithTag("Floor");
+
+        if (floorsArray[floorsArray.Length - 1].transform.position.z == 5)
+        {hidingPlatforms = false;
+        RearrangePlatforms();
+        ShowPlatforms();
+        return;};
         
-        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag ("Floor");
+        for (int i = 0; i < floorsArray.Length; i++)
+        {
+            floorsArray[i].transform.position = Vector3.MoveTowards(floorsArray[i].transform.position, new Vector3(floorsArray[i].transform.position.x, floorsArray[i].transform.position.y, 5), 1 * Time.fixedDeltaTime);
+        }
+    }
+
+    public void ShowPlatforms() {
+        showingPlatforms = true;
+        Debug.Log(showingPlatforms);
+        GameObject[] floorsArray = GameObject.FindGameObjectsWithTag("Floor");
+
+        if (floorsArray[floorsArray.Length - 1].transform.position.z == 1)
+        {showingPlatforms = false;
+        return;}
+        
+        for (int i = 0; i < floorsArray.Length; i++)
+        {
+            floorsArray[i].transform.position = Vector3.MoveTowards(floorsArray[i].transform.position, new Vector3(floorsArray[i].transform.position.x, floorsArray[i].transform.position.y, 1), 1 * Time.fixedDeltaTime);
+        }
+    }
+
+    private void RearrangePlatforms() {
+        GameObject[] floorsArray = GameObject.FindGameObjectsWithTag("Floor");
 
         int[] xMatrix = {UnityEngine.Random.Range(-15, -11), UnityEngine.Random.Range(-2, 2), UnityEngine.Random.Range(15, 11)};
         int[] yMatrix = {UnityEngine.Random.Range(-2, 4)};
 
-
-        for (int i = 0; i < gameObjects.Length; i++)
+        // StartCoroutine(TransitionPlatforms());
+        new WaitForSeconds(5);
+        for (int i = 0; i < floorsArray.Length; i++)
         {
-            gameObjects[i].transform.position = new Vector3 (xMatrix[i], UnityEngine.Random.Range(-2, 4), 2);
+            floorsArray[i].transform.position = new Vector3 (xMatrix[i], UnityEngine.Random.Range(-2, 4), 5);
         }
+        
         // foreach (var item in gameObjects)
         // {
         //     Debug.Log(Array.IndexOf(gameObjects, item));
@@ -70,7 +108,7 @@ public class GameManager : MonoBehaviour
     }
 
 
-    private Vector3 generateSpawnPosition()
+    private Vector3 generateCoinSpawn()
     {
         float spawnPosX = UnityEngine.Random.Range(-13, 3);
         float spawnPosY = UnityEngine.Random.Range(-5, 9);
@@ -83,14 +121,16 @@ public class GameManager : MonoBehaviour
     }
 
     public void SpawnCoin() {
-        Instantiate(coin, new Vector3(generateSpawnPosition().x, generateSpawnPosition().y, 0), coin.transform.rotation);
+        Instantiate(coin, new Vector3(generateCoinSpawn().x, generateCoinSpawn().y, 0), coin.transform.rotation);
     }
 
     public void IncreaseScore() {
         score++;
         scoreText.text = "Score: " + score;
-        if (score % 5 == 0)
-        {RearrangePlatforms();}
+        // if (score % 5 == 0)
+        // {RearrangePlatforms();}
+        // StartCoroutine(TransitionPlatforms());
+        HidePlatforms();
         SpawnEnemy();
         Debug.Log(score);
     }
@@ -130,13 +170,18 @@ public class GameManager : MonoBehaviour
         pauseMenu = GameObject.Find("Pause Menu");
         isPaused = false;
         pauseMenu.SetActive(false);
-Debug.Log(isPaused);
+        Debug.Log(isPaused);
         // PauseGame();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (hidingPlatforms)
+        {HidePlatforms();}
+        else if (showingPlatforms)
+        {ShowPlatforms();}
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {PauseGame();}
         // Debug.Log(playerRb.transform.position);
